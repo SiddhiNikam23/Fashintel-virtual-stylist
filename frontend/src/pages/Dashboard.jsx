@@ -71,6 +71,19 @@ const Dashboard = () => {
     }
   };
 
+  const handleFeatureClick = (featureType) => {
+    // Add your routing logic here
+    const routes = {
+      'style-analysis': '/style-analysis',
+      'visual-search': '/visual-search',
+      'trend-predictions': '/trend-predictions'
+    };
+    
+    // For React Router: navigate(routes[featureType]);
+    // For Next.js: router.push(routes[featureType]);
+    window.location.href = routes[featureType];
+  };
+
   return (
     <div className="dashboard-container">
       <style jsx>{`
@@ -392,11 +405,16 @@ const Dashboard = () => {
           padding: 30px;
           border-radius: 20px;
           box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-          transition: transform 0.3s ease;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          border: 2px solid transparent;
         }
 
         .feature-card:hover {
           transform: translateY(-10px);
+          box-shadow: 0 10px 30px rgba(156, 39, 176, 0.3);
+          border-color: #9c27b0;
+          background: linear-gradient(135deg, #ffffff, #f3e5f5);
         }
 
         .feature-icon {
@@ -614,7 +632,10 @@ const Dashboard = () => {
           </p>
           
           <div className="features-grid">
-            <div className="feature-card">
+            <div 
+              className="feature-card"
+              onClick={() => handleFeatureClick('style-analysis')}
+            >
               <div className="feature-icon">🤖</div>
               <h3 className="feature-title">Smart Style Analysis</h3>
               <p className="feature-desc">
@@ -623,7 +644,10 @@ const Dashboard = () => {
               </p>
             </div>
             
-            <div className="feature-card">
+            <div 
+              className="feature-card"
+              onClick={() => handleFeatureClick('visual-search')}
+            >
               <div className="feature-icon">👁️</div>
               <h3 className="feature-title">Visual Style Search</h3>
               <p className="feature-desc">
@@ -632,7 +656,10 @@ const Dashboard = () => {
               </p>
             </div>
             
-            <div className="feature-card">
+            <div 
+              className="feature-card"
+              onClick={() => handleFeatureClick('trend-predictions')}
+            >
               <div className="feature-icon">🎯</div>
               <h3 className="feature-title">Trend Predictions</h3>
               <p className="feature-desc">
