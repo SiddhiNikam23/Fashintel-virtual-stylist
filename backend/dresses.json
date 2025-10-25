@@ -1,0 +1,20 @@
+[
+  {"id": 1, "name": "Red Party Dress", "img": "/static/img/red.jpg", "price": 1499},
+  {"id": 2, "name": "Floral Summer Dress", "img": "/static/img/floral.jpg", "price": 999},
+  {"id": 3, "name": "Elegant Black Gown", "img": "/static/img/black.jpg", "price": 1999},
+  {"id": 4, "name": "Blue Evening Dress", "img": "/static/img/blue.jpg", "price": 1799},
+  {"id": 5, "name": "Yellow Sundress", "img": "/static/img/yello.jpg", "price": 899},
+  {"id": 7, "name": "Yellow Sundress", "img": "/static/img/7.jpg", "price": 899},
+  {"id": 8, "name": "Yellow Sundress", "img": "/static/img/8.jpg", "price": 899},
+  {"id": 9, "name": "Yellow Sundress", "img": "/static/img/9.jpg", "price": 899},
+  {"id": 10, "name": "Yellow Sundress", "img": "/static/img/10.jpg", "price": 899},
+  {"id": 11, "name": "Yellow Sundress", "img": "/static/img/11.jpg", "price": 899},
+  {"id": 12, "name": "Yellow Sundress", "img": "/static/img/12.jpg", "price": 899},
+  {"id": 13, "name": "Yellow Sundress", "img": "/static/img/13.jpg", "price": 899},
+  {"id": 14, "name": "Yellow Sundress", "img": "/static/img/14.jpg", "price": 899}
+
+
+
+
+
+]
