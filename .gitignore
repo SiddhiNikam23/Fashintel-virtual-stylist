@@ -11,7 +11,7 @@ backend/.env
 # Generated/uploaded files
 backend/uploads/
 backend/tryon_outputs/
-backend/static/
+#backend/static/
 
 # Dependencies
 node_modules/
