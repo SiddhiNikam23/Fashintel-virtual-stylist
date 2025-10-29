@@ -265,11 +265,15 @@ def virtual_tryon():
     user_path = os.path.join(UPLOAD_FOLDER, f"user_{uuid.uuid4().hex}.jpg")
     dress_path = os.path.join(UPLOAD_FOLDER, f"dress_{uuid.uuid4().hex}.jpg")
     
-    user_image.save(user_path)
-    dress_image.save(dress_path)
-
     try:
+        user_image.save(user_path)
+        dress_image.save(dress_path)
+        
+        print(f"✅ Saved user image: {user_path}")
+        print(f"✅ Saved dress image: {dress_path}")
+
         # Use Hugging Face IDM-VTON model
+        print("🔄 Calling Hugging Face API...")
         client = Client("yisol/IDM-VTON")
         result = client.predict(
             dict={"background": handle_file(user_path), "layers": [], "composite": None},
@@ -282,16 +286,55 @@ def virtual_tryon():
             api_name="/tryon"
         )
         
+        print(f"📦 API Result type: {type(result)}")
+        print(f"📦 API Result: {result}")
+        
+        # ✅ FIX: Check if result exists and has content
+        if not result:
+            return jsonify({"error": "AI model returned empty result"}), 500
+        
+        # Handle different result formats
+        if isinstance(result, (list, tuple)):
+            if len(result) == 0:
+                return jsonify({"error": "AI model returned empty result"}), 500
+            result_path = result[0]
+        elif isinstance(result, str):
+            result_path = result
+        else:
+            return jsonify({"error": f"Unexpected result format: {type(result)}"}), 500
+        
+        # Check if result file exists
+        if not os.path.exists(result_path):
+            return jsonify({"error": "Result file not found"}), 500
+        
         # Save result
         output_filename = f"tryon_{uuid.uuid4().hex}.jpg"
         output_path = os.path.join(OUTPUT_FOLDER, output_filename)
-        shutil.copy(result[0], output_path)
+        shutil.copy(result_path, output_path)
         
-        return jsonify({"result": f"/tryon_outputs/{output_filename}"})
+        print(f"✅ Saved result: {output_path}")
+        
+        return jsonify({"result": f"/tryon_outputs/{output_filename}"}), 200
+    
+    except IndexError as e:
+        print(f"❌ IndexError: {e}")
+        return jsonify({"error": "AI processing failed - could not extract result"}), 500
     
     except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({"error": str(e)}), 500
+        print(f"❌ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Processing failed: {str(e)}"}), 500
+    
+    finally:
+        # Clean up temporary files (optional)
+        try:
+            if os.path.exists(user_path):
+                os.remove(user_path)
+            if os.path.exists(dress_path):
+                os.remove(dress_path)
+        except:
+            pass
 # ----------------------------
 # Run App
 # ----------------------------
