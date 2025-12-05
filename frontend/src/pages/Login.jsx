@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ShoppingBag, Sparkles } from 'lucide-react';
 
-// (Keep your InputField, PopupModal, LoadingButton, etc. same as before) ...
+// 🌐 Dynamic API URL (works for local + Vercel + Render)
+const API =
+  process.env.NODE_ENV === "production"
+    ? "https://YOUR-RENDER-BACKEND-URL"   // ← replace after backend deploy
+    : "http://localhost:5000";
 
 const useLoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -39,7 +43,7 @@ const useLoginForm = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch(`${API}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -52,19 +56,16 @@ const useLoginForm = () => {
         setPopupMessage('Login successful! Redirecting to dashboard...');
         setShowPopup(true);
 
-        // Save user and token
-        if (data.user) {
-          localStorage.setItem('userData', JSON.stringify(data.user));
-        }
-        if (data.token) {
-          localStorage.setItem('authToken', data.token);
-        }
+        // Save user data
+        if (data.user) localStorage.setItem('userData', JSON.stringify(data.user));
+        if (data.token) localStorage.setItem('authToken', data.token);
 
         setFormData({ email: '', password: '' });
 
         setTimeout(() => {
           window.location.href = '/dashboard';
         }, 1500);
+
       } else {
         throw new Error(data.error || data.message || 'Login failed');
       }
@@ -73,8 +74,8 @@ const useLoginForm = () => {
       setPopupType('error');
       setPopupMessage(
         error.message === 'Failed to fetch'
-        ? 'Network error. Please check your connection and try again.'
-        : error.message || 'Login failed. Please try again.'
+          ? 'Network error. Please check your connection and try again.'
+          : error.message || 'Login failed. Please try again.'
       );
       setShowPopup(true);
     } finally {
@@ -82,22 +83,12 @@ const useLoginForm = () => {
     }
   };
 
-  const closePopup = () => {
-    setShowPopup(false);
-  };
-
-  const navigateToRegister = () => {
-    window.location.href = '/register';
-  };
-
-  const navigateToForgotPassword = () => {
-    window.location.href = '/forgot-password';
-  };
+  const closePopup = () => setShowPopup(false);
+  const navigateToRegister = () => (window.location.href = '/register');
+  const navigateToForgotPassword = () => (window.location.href = '/forgot-password');
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSubmit();
-    }
+    if (e.key === 'Enter') handleSubmit();
   };
 
   return {
@@ -138,11 +129,8 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 flex items-center justify-center p-4">
-      {/* BackgroundElements if any */}
-
       <div className="relative w-full max-w-md">
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 relative overflow-hidden">
-          {/* BackgroundElements */}
 
           <div className="text-center mb-8 relative z-10">
             <div className="flex items-center justify-center mb-4">
@@ -161,6 +149,8 @@ const LoginPage = () => {
           </div>
 
           <div className="space-y-6 relative z-10" onKeyPress={handleKeyPress}>
+            
+            {/* Email */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Email</label>
               <div className="relative">
@@ -171,7 +161,7 @@ const LoginPage = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 transition-all duration-300 bg-white/50 ${
-                    errors.email ? 'border-red-300 focus:border-red-400' : 'border-gray-200'
+                    errors.email ? 'border-red-300' : 'border-gray-200'
                   }`}
                   placeholder="john@example.com"
                 />
@@ -179,6 +169,7 @@ const LoginPage = () => {
               {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
 
+            {/* Password */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Password</label>
               <div className="relative">
@@ -189,7 +180,7 @@ const LoginPage = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   className={`w-full pl-10 pr-12 py-3 border-2 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 transition-all duration-300 bg-white/50 ${
-                    errors.password ? 'border-red-300 focus:border-red-400' : 'border-gray-200'
+                    errors.password ? 'border-red-300' : 'border-gray-200'
                   }`}
                   placeholder="••••••••"
                 />
@@ -207,12 +198,13 @@ const LoginPage = () => {
             <div className="text-right">
               <span
                 onClick={navigateToForgotPassword}
-                className="text-sm text-purple-600 hover:text-purple-700 hover:underline transition-colors cursor-pointer"
+                className="text-sm text-purple-600 hover:text-purple-700 hover:underline cursor-pointer"
               >
                 Forgot password?
               </span>
             </div>
 
+            {/* Submit */}
             <button
               type="button"
               onClick={handleSubmit}
@@ -231,12 +223,13 @@ const LoginPage = () => {
               ) : 'Login'}
             </button>
 
+            {/* Register */}
             <div className="text-center pt-4 border-t border-gray-200">
               <p className="text-gray-600">
                 Don't have an account?{' '}
                 <span
                   onClick={navigateToRegister}
-                  className="text-purple-600 hover:text-purple-700 font-semibold hover:underline cursor-pointer transition-colors"
+                  className="text-purple-600 hover:text-purple-700 font-semibold hover:underline cursor-pointer"
                 >
                   Register here
                 </span>
@@ -246,29 +239,39 @@ const LoginPage = () => {
         </div>
       </div>
 
+      {/* Popup Modal */}
       {showPopup && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in duration-300">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
             <div className="text-center">
-              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
-                popupType === 'success' ? 'bg-green-100' : 'bg-red-100'
-              }`}>
+              <div
+                className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
+                  popupType === 'success' ? 'bg-green-100' : 'bg-red-100'
+                }`}
+              >
                 {popupType === 'success' ? (
                   <Sparkles className="w-8 h-8 text-green-600" />
                 ) : (
                   <div className="w-8 h-8 text-red-600 text-2xl font-bold">!</div>
                 )}
               </div>
-              <h3 className={`text-lg font-semibold mb-2 ${
-                popupType === 'success' ? 'text-green-800' : 'text-red-800'
-              }`}>
+
+              <h3
+                className={`text-lg font-semibold mb-2 ${
+                  popupType === 'success' ? 'text-green-800' : 'text-red-800'
+                }`}
+              >
                 {popupType === 'success' ? 'Success!' : 'Error'}
               </h3>
+
               <p className="text-gray-600 mb-6">{popupMessage}</p>
+
               <button
                 onClick={closePopup}
-                className={`px-6 py-2 rounded-xl font-semibold text-white transition-colors ${
-                  popupType === 'success' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
+                className={`px-6 py-2 rounded-xl font-semibold text-white ${
+                  popupType === 'success'
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-600 hover:bg-red-700'
                 }`}
               >
                 OK
