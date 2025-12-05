@@ -5,7 +5,7 @@ import { Eye, EyeOff, User, Mail, Lock, Sparkles, ShoppingBag } from 'lucide-rea
 // 🌐 Dynamic API URL (same as Login.jsx)
 const API =
   process.env.NODE_ENV === "production"
-    ? "https://YOUR-RENDER-BACKEND-URL"   // <-- Update this after Render backend deploy
+    ? "https://fashintel-virtual-stylist.onrender.com"   // <-- Update this after Render backend deploy
     : "http://localhost:5000";
 
 const RegisterPage = () => {

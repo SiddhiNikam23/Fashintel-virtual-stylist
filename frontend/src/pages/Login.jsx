@@ -4,7 +4,7 @@ import { Eye, EyeOff, Mail, Lock, ShoppingBag, Sparkles } from 'lucide-react';
 // 🌐 Dynamic API URL (works for local + Vercel + Render)
 const API =
   process.env.NODE_ENV === "production"
-    ? "https://YOUR-RENDER-BACKEND-URL"   // ← replace after backend deploy
+    ? "https://fashintel-virtual-stylist.onrender.com"   // ← replace after backend deploy
     : "http://localhost:5000";
 
 const useLoginForm = () => {
