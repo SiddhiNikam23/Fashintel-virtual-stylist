@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 
+// Auto-switch API (LOCAL → PROD)
+const API =
+  process.env.NODE_ENV === "production"
+    ? "https://fashintel-virtual-stylist.onrender.com"
+    : "http://localhost:5000";
+
 const Collection = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/dresses")
+    fetch(`${API}/api/dresses`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch((err) => console.error("Error fetching products:", err));
@@ -94,7 +100,7 @@ const Collection = () => {
               }}
             >
               <img
-                src={`http://127.0.0.1:5000${p.img}`}
+                src={`${API}${p.img}`}      // <--- FIXED HERE
                 alt={p.name}
                 style={{
                   width: "100%",
@@ -102,11 +108,11 @@ const Collection = () => {
                   objectFit: "cover",
                   transition: "transform 0.3s ease",
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               />
-              
-              {/* Quick View Badge */}
+
+              {/* Badge */}
               <div
                 style={{
                   position: "absolute",
@@ -171,22 +177,8 @@ const Collection = () => {
                   alignItems: "center",
                   justifyContent: "center",
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(139, 92, 246, 0.35)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(139, 92, 246, 0.25)";
-                }}
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  style={{ marginRight: "8px" }}
-                >
+                <svg width="18" height="18" fill="none" style={{ marginRight: "8px" }}>
                   <rect x="3" y="6" width="18" height="13" rx="2" stroke="white" strokeWidth="2" />
                   <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="2" />
                   <path d="M9 6L10 4H14L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" />
@@ -198,15 +190,7 @@ const Collection = () => {
         ))}
       </div>
 
-      {/* Footer */}
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "80px",
-          color: "#9ca3af",
-          fontSize: "14px",
-        }}
-      >
+      <div style={{ textAlign: "center", marginTop: "80px", color: "#9ca3af", fontSize: "14px" }}>
         Powered by AI • Find your perfect style
       </div>
     </div>

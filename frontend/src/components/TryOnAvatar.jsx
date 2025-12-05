@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 
 function TryOnAvatar() {
-  // Get dressId from URL if needed
   const searchParams = new URLSearchParams(window.location.search);
   const dressId = searchParams.get("dressId");
+
+  const API =
+    process.env.NODE_ENV === "production"
+      ? "https://fashintel-virtual-stylist.onrender.com"
+      : "http://localhost:5000";
 
   const [bodyImage, setBodyImage] = useState(null);
   const [dressImage, setDressImage] = useState(null);
@@ -15,11 +19,11 @@ function TryOnAvatar() {
 
   useEffect(() => {
     if (dressId) {
-      fetch(`http://127.0.0.1:5000/api/dress/${dressId}`)
+      fetch(`${API}/api/dress/${dressId}`)
         .then((res) => res.json())
         .then((data) => {
           if (!data.error && data.img) {
-            setDressPreview(`http://127.0.0.1:5000${data.img}`);
+            setDressPreview(`${API}${data.img}`);
           } else {
             setError("Dress not found!");
           }
@@ -29,7 +33,7 @@ function TryOnAvatar() {
           setError("Failed to load dress image!");
         });
     }
-  }, [dressId]);
+  }, [dressId, API]);
 
   const handleBodyImageChange = (e) => {
     const file = e.target.files[0];
@@ -75,14 +79,14 @@ function TryOnAvatar() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/fashion/tryon", {
+      const response = await fetch(`${API}/api/fashion/tryon`, {
         method: "POST",
         body: formData,
       });
 
       const data = await response.json();
       if (response.ok && data.result) {
-        const imageUrl = `http://127.0.0.1:5000${data.result}`;
+        const imageUrl = `${API}${data.result}`;
         setResult({ result: imageUrl });
       } else {
         setError(data.error || "Try-on failed!");
@@ -120,9 +124,9 @@ function TryOnAvatar() {
 
   const CameraIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ marginRight: "8px" }}>
-      <rect x="3" y="6" width="18" height="13" rx="2" stroke="white" strokeWidth="2"/>
-      <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="2"/>
-      <path d="M9 6L10 4H14L15 6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      <rect x="3" y="6" width="18" height="13" rx="2" stroke="white" strokeWidth="2" />
+      <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="2" />
+      <path d="M9 6L10 4H14L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 
@@ -134,24 +138,12 @@ function TryOnAvatar() {
         background: "linear-gradient(180deg, #f3e7ff 0%, #e9d5ff 100%)",
       }}
     >
-      <div style={{ 
-        textAlign: "center", 
-        marginBottom: "50px",
-      }}>
+      <div style={{ textAlign: "center", marginBottom: "50px" }}>
         <SparkleIcon />
-        <h1 style={{ 
-          fontSize: "42px", 
-          color: "#7c3aed",
-          marginBottom: "12px",
-          fontWeight: "700",
-        }}>
+        <h1 style={{ fontSize: "42px", color: "#7c3aed", marginBottom: "12px", fontWeight: "700" }}>
           AI Virtual Try-On
         </h1>
-        <p style={{ 
-          fontSize: "18px", 
-          color: "#6b7280",
-          fontWeight: "400",
-        }}>
+        <p style={{ fontSize: "18px", color: "#6b7280", fontWeight: "400" }}>
           Discover your perfect color palette with AI-powered analysis
         </p>
       </div>
@@ -166,6 +158,8 @@ function TryOnAvatar() {
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
         }}
       >
+
+        {/* GRID */}
         <div
           style={{
             display: "grid",
@@ -176,15 +170,11 @@ function TryOnAvatar() {
             margin: "0 auto 40px auto",
           }}
         >
-          {/* User Photo Upload */}
+          {/* USER PHOTO */}
           <div>
             <label style={{ cursor: "pointer", display: "block" }}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleBodyImageChange}
-                style={{ display: "none" }}
-              />
+              <input type="file" accept="image/*" onChange={handleBodyImageChange} style={{ display: "none" }} />
+
               {!bodyPreview ? (
                 <div
                   style={{
@@ -193,58 +183,35 @@ function TryOnAvatar() {
                     padding: "80px 30px",
                     textAlign: "center",
                     background: "#faf5ff",
-                    transition: "all 0.3s ease",
                     aspectRatio: "1",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
                   }}
                 >
                   <UploadIcon />
-                  <p style={{ 
-                    fontSize: "18px", 
-                    fontWeight: "600",
-                    color: "#8b5cf6",
-                    marginTop: "16px",
-                    marginBottom: "6px",
-                  }}>
+                  <p style={{ fontSize: "18px", color: "#8b5cf6", fontWeight: "600", marginTop: "16px" }}>
                     Upload your photo
-                  </p>
-                  <p style={{ 
-                    fontSize: "14px", 
-                    color: "#9ca3af",
-                    margin: 0,
-                  }}>
-                    Click or drag and drop
                   </p>
                 </div>
               ) : (
-                <div style={{ position: "relative" }}>
-                  <img
-                    src={bodyPreview}
-                    alt="Your photo"
-                    style={{
-                      width: "100%",
-                      aspectRatio: "1",
-                      objectFit: "cover",
-                      borderRadius: "16px",
-                      border: "2px solid #e9d5ff",
-                    }}
-                  />
-                </div>
+                <img
+                  src={bodyPreview}
+                  alt="Your photo"
+                  style={{
+                    width: "100%",
+                    aspectRatio: "1",
+                    objectFit: "cover",
+                    borderRadius: "16px",
+                    border: "2px solid #e9d5ff",
+                  }}
+                />
               )}
             </label>
           </div>
 
-          {/* Dress Image Upload */}
+          {/* DRESS IMAGE */}
           <div>
             <label style={{ cursor: "pointer", display: "block" }}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleDressImageChange}
-                style={{ display: "none" }}
-              />
+              <input type="file" accept="image/*" onChange={handleDressImageChange} style={{ display: "none" }} />
+
               {!dressPreview ? (
                 <div
                   style={{
@@ -253,50 +220,32 @@ function TryOnAvatar() {
                     padding: "80px 30px",
                     textAlign: "center",
                     background: "#faf5ff",
-                    transition: "all 0.3s ease",
                     aspectRatio: "1",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
                   }}
                 >
                   <UploadIcon />
-                  <p style={{ 
-                    fontSize: "18px", 
-                    fontWeight: "600",
-                    color: "#8b5cf6",
-                    marginTop: "16px",
-                    marginBottom: "6px",
-                  }}>
+                  <p style={{ fontSize: "18px", color: "#8b5cf6", fontWeight: "600", marginTop: "16px" }}>
                     Upload garment photo
-                  </p>
-                  <p style={{ 
-                    fontSize: "14px", 
-                    color: "#9ca3af",
-                    margin: 0,
-                  }}>
-                    Click or drag and drop
                   </p>
                 </div>
               ) : (
-                <div style={{ position: "relative" }}>
-                  <img
-                    src={dressPreview}
-                    alt="Garment"
-                    style={{
-                      width: "100%",
-                      aspectRatio: "1",
-                      objectFit: "cover",
-                      borderRadius: "16px",
-                      border: "2px solid #e9d5ff",
-                    }}
-                  />
-                </div>
+                <img
+                  src={dressPreview}
+                  alt="Garment"
+                  style={{
+                    width: "100%",
+                    aspectRatio: "1",
+                    objectFit: "cover",
+                    borderRadius: "16px",
+                    border: "2px solid #e9d5ff",
+                  }}
+                />
               )}
             </label>
           </div>
         </div>
 
+        {/* TRY ON BUTTON */}
         <button
           onClick={handleTryOn}
           disabled={loading}
@@ -310,8 +259,6 @@ function TryOnAvatar() {
             fontWeight: "600",
             cursor: loading ? "not-allowed" : "pointer",
             border: "none",
-            boxShadow: loading ? "none" : "0 4px 12px rgba(139, 92, 246, 0.25)",
-            transition: "all 0.2s ease",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -319,17 +266,18 @@ function TryOnAvatar() {
         >
           {loading ? (
             <>
-              <div style={{
-                width: "16px",
-                height: "16px",
-                border: "2px solid rgba(255,255,255,0.3)",
-                borderTop: "2px solid white",
-                borderRadius: "50%",
-                animation: "spin 0.8s linear infinite",
-                marginRight: "10px",
-              }} />
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  border: "2px solid rgba(255,255,255,0.3)",
+                  borderTop: "2px solid white",
+                  borderRadius: "50%",
+                  animation: "spin 0.8s linear infinite",
+                  marginRight: "10px",
+                }}
+              />
               Processing...
-              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </>
           ) : (
             <>
@@ -339,40 +287,25 @@ function TryOnAvatar() {
           )}
         </button>
 
+        {/* ERROR MESSAGE */}
         {error && (
-          <div style={{ 
-            marginTop: "20px",
-            padding: "14px",
-            background: "#fee2e2",
-            borderRadius: "12px",
-            border: "1px solid #fca5a5",
-          }}>
-            <p style={{ 
-              color: "#dc2626", 
-              textAlign: "center",
-              fontSize: "15px",
-              fontWeight: "500",
-              margin: 0,
-            }}>
-              {error}
-            </p>
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "14px",
+              background: "#fee2e2",
+              borderRadius: "12px",
+              border: "1px solid #fca5a5",
+            }}
+          >
+            <p style={{ color: "#dc2626", textAlign: "center", fontWeight: "500" }}>{error}</p>
           </div>
         )}
 
+        {/* RESULT */}
         {result && (
-          <div style={{ 
-            textAlign: "center", 
-            marginTop: "40px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}>
-            <h3 style={{ 
-              fontSize: "24px", 
-              color: "#7c3aed",
-              marginBottom: "24px",
-              fontWeight: "600",
-            }}>
+          <div style={{ textAlign: "center", marginTop: "40px" }}>
+            <h3 style={{ fontSize: "24px", color: "#7c3aed", marginBottom: "24px" }}>
               Your Try-On Result
             </h3>
             <img
@@ -382,20 +315,21 @@ function TryOnAvatar() {
                 maxWidth: "400px",
                 width: "100%",
                 borderRadius: "16px",
-                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
                 border: "2px solid #e9d5ff",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
               }}
             />
           </div>
         )}
 
-        <p style={{ 
-          textAlign: "center", 
-          marginTop: "32px",
-          fontSize: "14px",
-          color: "#9ca3af",
-          margin: "32px 0 0 0",
-        }}>
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "32px",
+            fontSize: "14px",
+            color: "#9ca3af",
+          }}
+        >
           Powered by AI • Find your perfect style
         </p>
       </div>

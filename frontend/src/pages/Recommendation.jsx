@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Camera, Sparkles, Copy, Volume2, Upload } from 'lucide-react';
 
-const BACKEND_URL = "http://192.168.137.1:5000";
+const BACKEND_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://fashintel-virtual-stylist.onrender.com"
+    : "http://localhost:5000";
+
 
 export default function AIRecommendation() {
   const [file, setFile] = useState(null);
